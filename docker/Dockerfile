@@ -147,6 +147,12 @@ COPY --from=pre-builder /app /app
 # Copy .git_sha file from pre-builder stage
 COPY --from=pre-builder /app/.git_sha /app/.git_sha
 
+# Ensure entrypoint scripts have execute permissions
+RUN chmod +x /app/docker/entrypoints/*.sh
+
 WORKDIR /app
 
 EXPOSE 3000
+
+ENTRYPOINT ["/app/docker/entrypoints/rails.sh"]
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
