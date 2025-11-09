@@ -4,7 +4,6 @@ require 'tempfile'
 module Whatsapp::EvolutionHandlers::MessagesUpsert
   include Whatsapp::EvolutionHandlers::Helpers
   include Whatsapp::Waha::UpsertMethods
-  include EvolutionHelper
 
   private
 
