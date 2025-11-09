@@ -398,12 +398,14 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
       return { ok: false, error: error_message }
     end
 
+    # Use timeout para evitar travamentos
     remove_existing_instance
 
     response = HTTParty.post(
       "#{api_base_path}/instance/create",
       headers: api_headers,
-      body: instance_payload.to_json
+      body: instance_payload.to_json,
+      timeout: 30  # Timeout de 30 segundos
     )
 
     if response.success?
@@ -416,12 +418,12 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
         error: nil
       }
       
-      # Try to fetch QR code
+      # Try to fetch QR code de forma assíncrona
       begin
         qr_response = HTTParty.get(
           "#{api_base_path}/instance/connect/#{instance_name}",
           headers: api_headers,
-          timeout: 10
+          timeout: 15  # Reduzido para 15 segundos
         )
         
         if qr_response.success? && qr_response.parsed_response.is_a?(Hash)
@@ -439,15 +441,14 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
         end
       rescue StandardError => e
         Rails.logger.warn "Evolution API QR fetch warning: #{e.message}"
+        # Não falha o setup se QR code não carregar
       end
       
       whatsapp_channel.update_provider_connection!(connection_data)
       
-      # Configure webhook after instance creation
-      webhook_result = configure_webhook
-      unless webhook_result.is_a?(Hash) && webhook_result[:ok]
-        Rails.logger.warn "Evolution API webhook configuration warning: #{webhook_result[:error]}"
-      end
+      # Configure webhook de forma assíncrona em background job
+      # para não bloquear o setup
+      Whatsapp::ConfigureEvolutionWebhookJob.perform_later(whatsapp_channel.id) rescue nil
 
       { ok: true, response: parsed_response }
     else
@@ -487,13 +488,24 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
   end
 
   def remove_existing_instance
-    instances = HTTParty.get("#{api_base_path}/instance/fetchInstances", headers: api_headers)
+    instances = HTTParty.get(
+      "#{api_base_path}/instance/fetchInstances",
+      headers: api_headers,
+      timeout: 15  # Timeout para evitar travamentos
+    )
     return unless instances.success?
 
     names = Array(instances.parsed_response).map { |inst| inst['instanceName'] || inst['name'] }
     return unless names.include?(instance_name)
 
-    HTTParty.delete("#{api_base_path}/instance/delete/#{instance_name}", headers: api_headers)
+    HTTParty.delete(
+      "#{api_base_path}/instance/delete/#{instance_name}",
+      headers: api_headers,
+      timeout: 15  # Timeout para deleção
+    )
+  rescue StandardError => e
+    Rails.logger.warn "Evolution API: Failed to remove existing instance: #{e.message}"
+    # Não falha o setup se não conseguir remover instância antiga
   end
 
   def instance_payload
