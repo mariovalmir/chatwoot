@@ -27,7 +27,7 @@ class Channel::Whatsapp < ApplicationRecord
   EDITABLE_ATTRS = [:phone_number, :provider, { provider_config: {} }].freeze
 
   # default at the moment is 360dialog lets change later.
-  PROVIDERS = %w[default whatsapp_cloud baileys zapi waha].freeze
+  PROVIDERS = %w[default whatsapp_cloud baileys zapi waha evolution].freeze
   before_validation :ensure_webhook_verify_token
 
   validates :provider, inclusion: { in: PROVIDERS }
@@ -42,6 +42,8 @@ class Channel::Whatsapp < ApplicationRecord
   before_destroy :disconnect_channel_provider, if: -> { provider_service.respond_to?(:disconnect_channel_provider) }
   after_destroy_commit :destroy_waha_instance, if: -> { provider == 'waha' }
   after_update_commit :configure_waha_webhook, if: -> { provider == 'waha' && saved_change_to_provider_config? }
+  after_destroy_commit :destroy_evolution_instance, if: -> { provider == 'evolution' }
+  after_update_commit :configure_evolution_webhook, if: -> { provider == 'evolution' && saved_change_to_provider_config? }
 
   def name
     'Whatsapp'
@@ -57,6 +59,8 @@ class Channel::Whatsapp < ApplicationRecord
       Whatsapp::Providers::WhatsappZapiService.new(whatsapp_channel: self)
     when 'waha'
       Whatsapp::Providers::WahaService.new(whatsapp_channel: self)
+    when 'evolution'
+      Whatsapp::Providers::EvolutionService.new(whatsapp_channel: self)
     else
       Whatsapp::Providers::Whatsapp360DialogService.new(whatsapp_channel: self)
     end
@@ -159,6 +163,18 @@ class Channel::Whatsapp < ApplicationRecord
     provider_service.configure_webhook
   rescue StandardError => e
     Rails.logger.error "Waha webhook configure failed: #{e.message}"
+  end
+
+  def destroy_evolution_instance
+    disconnect_channel_provider
+  rescue StandardError => e
+    Rails.logger.error "Evolution disconnect failed: #{e.message}"
+  end
+
+  def configure_evolution_webhook
+    provider_service.configure_webhook
+  rescue StandardError => e
+    Rails.logger.error "Evolution webhook configure failed: #{e.message}"
   end
 
   private

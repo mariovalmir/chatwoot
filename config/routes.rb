@@ -200,6 +200,7 @@ Rails.application.routes.draw do
             get :health, on: :member
             post :on_whatsapp, on: :member
             post :recreate_waha_instance, on: :member
+            post :recreate_evolution_instance, on: :member
           end
           resources :inbox_members, only: [:create, :show], param: :inbox_id do
             collection do

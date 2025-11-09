@@ -162,6 +162,31 @@ class Api::V1::Accounts::InboxesController < Api::V1::Accounts::BaseController #
     render json: { error: e.message }, status: :internal_server_error
   end
 
+  def recreate_evolution_instance
+    unless @inbox.channel.is_a?(Channel::Whatsapp) && @inbox.channel.provider == 'evolution'
+      return render status: :unprocessable_entity,
+                    json: { error: 'Session recreation is only available for Evolution WhatsApp channels' }
+    end
+
+    whatsapp_channel = @inbox.channel
+    service = whatsapp_channel.provider_service
+
+    whatsapp_channel.disconnect_channel_provider
+
+    whatsapp_channel.setup_channel_provider
+
+    webhook_result = service.configure_webhook
+    unless webhook_result.is_a?(Hash) && webhook_result[:ok]
+      error_message = webhook_result.is_a?(Hash) ? webhook_result[:error] : 'Failed to configure webhook'
+      Rails.logger.warn "Evolution webhook configuration warning: #{error_message}"
+    end
+
+    render json: { message: 'Evolution instance recreated successfully' }
+  rescue StandardError => e
+    Rails.logger.error "Evolution recreate instance error: #{e.message}"
+    render json: { error: e.message }, status: :internal_server_error
+  end
+
   private
 
   def fetch_inbox

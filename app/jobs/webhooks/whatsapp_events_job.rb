@@ -17,6 +17,8 @@ class Webhooks::WhatsappEventsJob < ApplicationJob
       Whatsapp::IncomingMessageZapiService.new(inbox: channel.inbox, params: params).perform
     when 'waha'
       Whatsapp::IncomingMessageWahaService.new(inbox: channel.inbox, params: params).perform
+    when 'evolution'
+      Whatsapp::IncomingMessageEvolutionService.new(inbox: channel.inbox, params: params).perform
     else
       Whatsapp::IncomingMessageService.new(inbox: channel.inbox, params: params).perform
     end
