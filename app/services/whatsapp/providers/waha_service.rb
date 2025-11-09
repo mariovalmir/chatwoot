@@ -245,7 +245,7 @@ class Whatsapp::Providers::WahaService < Whatsapp::Providers::BaseService
       "#{base_path}/sessions",
       headers: api_headers,
       body: payload.to_json,
-      timeout: 20
+      timeout: 30  # Aumentado de 20s para 30s
     )
 
     if response.success?
@@ -264,7 +264,7 @@ class Whatsapp::Providers::WahaService < Whatsapp::Providers::BaseService
           "#{base_path}/#{session_name}/auth/qr",
           headers: api_headers,
           query: { format: 'raw' },
-          timeout: 10
+          timeout: 15  # Aumentado de 10s para 15s
         )
         
         if qr_response.success?
@@ -289,10 +289,16 @@ class Whatsapp::Providers::WahaService < Whatsapp::Providers::BaseService
         end
       rescue StandardError => e
         Rails.logger.warn "WAHA API QR fetch warning: #{e.message}"
+        # Não falha o setup se QR code não carregar
       end
       
       whatsapp_channel.update_provider_connection!(connection_data)
-      start_session unless payload[:start]
+      
+      # Start session de forma assíncrona se necessário
+      unless payload[:start]
+        Whatsapp::StartWahaSessionJob.perform_later(whatsapp_channel.id) rescue nil
+      end
+      
       { ok: true, response: parsed_response }
     else
       error_message = response_error_message(response)
