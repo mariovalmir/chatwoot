@@ -1,8 +1,6 @@
 class Whatsapp::IncomingMessageWahaService < Whatsapp::IncomingMessageBaseService
-  include Whatsapp::EvolutionHandlers::MessagesUpsert
-  include Whatsapp::EvolutionHandlers::MessagesUpdate
-  include Whatsapp::EvolutionHandlers::MessagesDelete
-  include Whatsapp::EvolutionHandlers::Helpers
+  include Whatsapp::Waha::HelperMethods
+  include Whatsapp::Waha::UpsertMethods
 
   EVENT_HANDLERS = {
     'messages.upsert' => :process_messages_upsert,
