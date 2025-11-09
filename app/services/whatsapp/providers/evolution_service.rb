@@ -350,7 +350,36 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
 
     if response.success?
       parsed_response = response.parsed_response
-      whatsapp_channel.update_provider_connection!(parsed_response)
+      
+      # Initialize provider_connection with proper structure
+      connection_data = {
+        connection: 'connecting',
+        qr_data_url: nil,
+        error: nil
+      }
+      
+      # Try to fetch QR code
+      begin
+        qr_response = HTTParty.get(
+          "#{api_base_path}/instance/connect/#{instance_name}",
+          headers: api_headers,
+          timeout: 10
+        )
+        
+        if qr_response.success? && qr_response.parsed_response.is_a?(Hash)
+          qr_data = qr_response.parsed_response
+          if qr_data['base64'] || qr_data['qrcode']
+            base64_qr = qr_data['base64'] || qr_data['qrcode']
+            connection_data[:qr_data_url] = "data:image/png;base64,#{base64_qr}"
+          elsif qr_data['code']
+            connection_data[:qr_data_url] = "data:image/png;base64,#{qr_data['code']}"
+          end
+        end
+      rescue StandardError => e
+        Rails.logger.warn "Evolution API QR fetch warning: #{e.message}"
+      end
+      
+      whatsapp_channel.update_provider_connection!(connection_data)
       
       # Configure webhook after instance creation
       webhook_result = configure_webhook

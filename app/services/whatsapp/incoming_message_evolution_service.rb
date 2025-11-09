@@ -37,11 +37,23 @@ class Whatsapp::IncomingMessageEvolutionService < Whatsapp::IncomingMessageBaseS
   end
 
   def handle_qrcode_updated
+    qr_base64 = processed_params.dig(:data, :qrcode, :base64)
+    
+    # Update provider_connection with QR code
+    if qr_base64.present?
+      current_connection = inbox.channel.provider_connection || {}
+      inbox.channel.update_provider_connection!(
+        connection: current_connection['connection'] || 'connecting',
+        qr_data_url: "data:image/png;base64,#{qr_base64}",
+        error: nil
+      )
+    end
+    
     Dispatcher.dispatch(
       Events::Types::WHATSAPP_QRCODE_UPDATED,
       Time.current,
       inbox: inbox,
-      qr_code: processed_params.dig(:data, :qrcode, :base64)
+      qr_code: qr_base64
     )
   end
 
@@ -52,7 +64,18 @@ class Whatsapp::IncomingMessageEvolutionService < Whatsapp::IncomingMessageBaseS
              processed_params.dig(:data, :status)
     status ||= 'close'
 
-    inbox.channel.update_provider_connection!(connection: status)
+    # Prepare connection data - clear QR code when connected
+    connection_data = { connection: status }
+    if status == 'open'
+      connection_data[:qr_data_url] = nil
+      connection_data[:error] = nil
+    else
+      current_connection = inbox.channel.provider_connection || {}
+      connection_data[:qr_data_url] = current_connection['qr_data_url']
+      connection_data[:error] = current_connection['error']
+    end
+
+    inbox.channel.update_provider_connection!(connection_data)
 
     Dispatcher.dispatch(
       Events::Types::WHATSAPP_CONNECTION_UPDATE,
@@ -72,7 +95,18 @@ class Whatsapp::IncomingMessageEvolutionService < Whatsapp::IncomingMessageBaseS
              data[:status]
     return unless status
 
-    inbox.channel.update_provider_connection!(connection: status)
+    # Prepare connection data - clear QR code when connected
+    connection_data = { connection: status }
+    if status == 'open'
+      connection_data[:qr_data_url] = nil
+      connection_data[:error] = nil
+    else
+      current_connection = inbox.channel.provider_connection || {}
+      connection_data[:qr_data_url] = current_connection['qr_data_url']
+      connection_data[:error] = current_connection['error']
+    end
+
+    inbox.channel.update_provider_connection!(connection_data)
 
     Dispatcher.dispatch(
       Events::Types::WHATSAPP_CONNECTION_UPDATE,

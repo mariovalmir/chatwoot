@@ -193,7 +193,37 @@ class Whatsapp::Providers::WahaService < Whatsapp::Providers::BaseService
 
     if response.success?
       parsed_response = response.parsed_response
-      whatsapp_channel.update_provider_connection!(parsed_response)
+      
+      # Initialize provider_connection with proper structure
+      connection_data = {
+        connection: 'connecting',
+        qr_data_url: nil,
+        error: nil
+      }
+      
+      # Try to fetch QR code
+      begin
+        qr_response = HTTParty.get(
+          "#{base_path}/#{session_name}/auth/qr",
+          headers: api_headers,
+          query: { format: 'raw' },
+          timeout: 10
+        )
+        
+        if qr_response.success?
+          qr_data = qr_response.parsed_response
+          if qr_data.is_a?(Hash) && (qr_data['base64'] || qr_data['qrcode'])
+            base64_qr = qr_data['base64'] || qr_data['qrcode']
+            connection_data[:qr_data_url] = "data:image/png;base64,#{base64_qr}"
+          elsif qr_data.is_a?(String) && qr_data.start_with?('data:image')
+            connection_data[:qr_data_url] = qr_data
+          end
+        end
+      rescue StandardError => e
+        Rails.logger.warn "WAHA API QR fetch warning: #{e.message}"
+      end
+      
+      whatsapp_channel.update_provider_connection!(connection_data)
       start_session unless payload[:start]
       { ok: true, response: parsed_response }
     else
