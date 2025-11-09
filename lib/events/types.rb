@@ -14,6 +14,7 @@ module Events::Types
   # channel events
   WEBWIDGET_TRIGGERED = 'webwidget.triggered'
   PROVIDER_EVENT_RECEIVED = 'provider.event_received'
+  WHATSAPP_QRCODE_UPDATED = 'whatsapp.qrcode_updated'
 
   # conversation events
   CONVERSATION_CREATED = 'conversation.created'

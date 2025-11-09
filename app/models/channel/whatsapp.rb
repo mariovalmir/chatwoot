@@ -27,7 +27,7 @@ class Channel::Whatsapp < ApplicationRecord
   EDITABLE_ATTRS = [:phone_number, :provider, { provider_config: {} }].freeze
 
   # default at the moment is 360dialog lets change later.
-  PROVIDERS = %w[default whatsapp_cloud baileys zapi].freeze
+  PROVIDERS = %w[default whatsapp_cloud baileys zapi waha].freeze
   before_validation :ensure_webhook_verify_token
 
   validates :provider, inclusion: { in: PROVIDERS }
@@ -40,6 +40,8 @@ class Channel::Whatsapp < ApplicationRecord
   before_destroy :teardown_webhooks
 
   before_destroy :disconnect_channel_provider, if: -> { provider_service.respond_to?(:disconnect_channel_provider) }
+  after_destroy_commit :destroy_waha_instance, if: -> { provider == 'waha' }
+  after_update_commit :configure_waha_webhook, if: -> { provider == 'waha' && saved_change_to_provider_config? }
 
   def name
     'Whatsapp'
@@ -53,6 +55,8 @@ class Channel::Whatsapp < ApplicationRecord
       Whatsapp::Providers::WhatsappBaileysService.new(whatsapp_channel: self)
     when 'zapi'
       Whatsapp::Providers::WhatsappZapiService.new(whatsapp_channel: self)
+    when 'waha'
+      Whatsapp::Providers::WahaService.new(whatsapp_channel: self)
     else
       Whatsapp::Providers::Whatsapp360DialogService.new(whatsapp_channel: self)
     end
@@ -143,6 +147,18 @@ class Channel::Whatsapp < ApplicationRecord
   rescue StandardError => e
     Rails.logger.error "[WHATSAPP] Webhook setup failed: #{e.message}"
     prompt_reauthorization!
+  end
+
+  def destroy_waha_instance
+    disconnect_channel_provider
+  rescue StandardError => e
+    Rails.logger.error "Waha disconnect failed: #{e.message}"
+  end
+
+  def configure_waha_webhook
+    provider_service.configure_webhook
+  rescue StandardError => e
+    Rails.logger.error "Waha webhook configure failed: #{e.message}"
   end
 
   private

@@ -199,6 +199,7 @@ Rails.application.routes.draw do
             post :sync_templates, on: :member
             get :health, on: :member
             post :on_whatsapp, on: :member
+            post :recreate_waha_instance, on: :member
           end
           resources :inbox_members, only: [:create, :show], param: :inbox_id do
             collection do

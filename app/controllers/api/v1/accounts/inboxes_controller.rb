@@ -125,6 +125,43 @@ class Api::V1::Accounts::InboxesController < Api::V1::Accounts::BaseController #
     render json: response, status: :ok
   end
 
+  def recreate_waha_instance
+    unless @inbox.channel.is_a?(Channel::Whatsapp) && @inbox.channel.provider == 'waha'
+      return render status: :unprocessable_entity,
+                    json: { error: 'Session recreation is only available for Waha WhatsApp channels' }
+    end
+
+    whatsapp_channel = @inbox.channel
+    service = whatsapp_channel.provider_service
+
+    whatsapp_channel.disconnect_channel_provider
+
+    setup_result = whatsapp_channel.setup_channel_provider
+    unless setup_result.is_a?(Hash) && setup_result[:ok]
+      error_message = setup_result.is_a?(Hash) ? setup_result[:error] : nil
+      return render status: :unprocessable_entity,
+                    json: { error: error_message.presence || 'Failed to recreate Waha session' }
+    end
+
+    @inbox.configure_waha_webhook
+
+    api_base = service.send(:api_base_path)
+    session_name = service.send(:session_name)
+
+    qr_response = HTTParty.get(
+      "#{api_base}/#{session_name}/auth/qr",
+      headers: service.api_headers,
+      query: { format: 'raw' }
+    )
+
+    qr_data = qr_response.parsed_response if qr_response.success?
+
+    render json: { message: 'Session recreated successfully', qrcode: qr_data }
+  rescue StandardError => e
+    Rails.logger.error "Waha recreate session error: #{e.message}"
+    render json: { error: e.message }, status: :internal_server_error
+  end
+
   private
 
   def fetch_inbox

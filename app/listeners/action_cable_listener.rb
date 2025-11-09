@@ -162,6 +162,20 @@ class ActionCableListener < BaseListener
     broadcast(account, [user.pubsub_token], CONVERSATION_MENTIONED, conversation.push_event_data)
   end
 
+  def whatsapp_qrcode_updated(event)
+    inbox = event.data[:inbox]
+    account = inbox.account
+    tokens = user_tokens(account, inbox.members) + [account_token(account)]
+
+    broadcast(
+      account,
+      tokens,
+      WHATSAPP_QRCODE_UPDATED,
+      inbox_id: inbox.id,
+      qr_code: event.data[:qr_code]
+    )
+  end
+
   private
 
   def account_token(account)
