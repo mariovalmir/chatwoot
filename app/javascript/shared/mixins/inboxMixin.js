@@ -101,6 +101,18 @@ export default {
         this.whatsAppAPIProvider === 'zapi'
       );
     },
+    isAWhatsAppWahaChannel() {
+      return (
+        this.channelType === INBOX_TYPES.WHATSAPP &&
+        this.whatsAppAPIProvider === 'waha'
+      );
+    },
+    isAWhatsAppEvolutionChannel() {
+      return (
+        this.channelType === INBOX_TYPES.WHATSAPP &&
+        this.whatsAppAPIProvider === 'evolution'
+      );
+    },
     chatAdditionalAttributes() {
       const { additional_attributes: additionalAttributes } = this.chat || {};
       return additionalAttributes || {};
