@@ -1127,6 +1127,8 @@
       "WHATSAPP": "WhatsApp",
       "WHATSAPP_BAILEYS": "WhatsApp - Baileys",
       "WHATSAPP_ZAPI": "WhatsApp - Z-API",
+      "WHATSAPP_WAHA": "WhatsApp - WAHA",
+      "WHATSAPP_EVOLUTION": "WhatsApp - Evolution",
       "SMS": "SMS",
       "EMAIL": "Email",
       "TELEGRAM": "Telegram",

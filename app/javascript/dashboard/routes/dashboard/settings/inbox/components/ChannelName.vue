@@ -50,6 +50,12 @@ const whatsappChannelName = () => {
   if (props.provider === 'zapi') {
     return t(`INBOX_MGMT.CHANNELS.WHATSAPP_ZAPI`);
   }
+  if (props.provider === 'waha') {
+    return t(`INBOX_MGMT.CHANNELS.WHATSAPP_WAHA`);
+  }
+  if (props.provider === 'evolution') {
+    return t(`INBOX_MGMT.CHANNELS.WHATSAPP_EVOLUTION`);
+  }
   return t(`INBOX_MGMT.CHANNELS.WHATSAPP`);
 };
 
