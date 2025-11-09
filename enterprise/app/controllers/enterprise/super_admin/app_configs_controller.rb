@@ -2,14 +2,16 @@ module Enterprise::SuperAdmin::AppConfigsController
   private
 
   def allowed_configs
-    return super if ChatwootHub.pricing_plan == 'community'
-
     case @config
     when 'custom_branding'
       @allowed_configs = custom_branding_options
     when 'internal'
+      return super if ChatwootHub.pricing_plan == 'community'
+
       @allowed_configs = internal_config_options
     when 'captain'
+      return super if ChatwootHub.pricing_plan == 'community'
+
       @allowed_configs = captain_config_options
     else
       super
