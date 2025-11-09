@@ -368,11 +368,15 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
         
         if qr_response.success? && qr_response.parsed_response.is_a?(Hash)
           qr_data = qr_response.parsed_response
-          if qr_data['base64'] || qr_data['qrcode']
-            base64_qr = qr_data['base64'] || qr_data['qrcode']
-            connection_data[:qr_data_url] = "data:image/png;base64,#{base64_qr}"
-          elsif qr_data['code']
-            connection_data[:qr_data_url] = "data:image/png;base64,#{qr_data['code']}"
+          base64_qr = qr_data['base64'] || qr_data['qrcode'] || qr_data['code']
+          
+          if base64_qr.present?
+            # Check if base64 already has data URI prefix
+            if base64_qr.start_with?('data:image')
+              connection_data[:qr_data_url] = base64_qr
+            else
+              connection_data[:qr_data_url] = "data:image/png;base64,#{base64_qr}"
+            end
           end
         end
       rescue StandardError => e

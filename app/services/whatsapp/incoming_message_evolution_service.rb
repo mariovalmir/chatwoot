@@ -42,9 +42,17 @@ class Whatsapp::IncomingMessageEvolutionService < Whatsapp::IncomingMessageBaseS
     # Update provider_connection with QR code
     if qr_base64.present?
       current_connection = inbox.channel.provider_connection || {}
+      
+      # Check if base64 already has data URI prefix
+      qr_data_url = if qr_base64.start_with?('data:image')
+                      qr_base64
+                    else
+                      "data:image/png;base64,#{qr_base64}"
+                    end
+      
       inbox.channel.update_provider_connection!(
         connection: current_connection['connection'] || 'connecting',
-        qr_data_url: "data:image/png;base64,#{qr_base64}",
+        qr_data_url: qr_data_url,
         error: nil
       )
     end

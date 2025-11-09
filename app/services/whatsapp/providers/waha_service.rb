@@ -212,11 +212,22 @@ class Whatsapp::Providers::WahaService < Whatsapp::Providers::BaseService
         
         if qr_response.success?
           qr_data = qr_response.parsed_response
-          if qr_data.is_a?(Hash) && (qr_data['base64'] || qr_data['qrcode'])
+          
+          # Handle different response formats
+          base64_qr = nil
+          if qr_data.is_a?(Hash)
             base64_qr = qr_data['base64'] || qr_data['qrcode']
-            connection_data[:qr_data_url] = "data:image/png;base64,#{base64_qr}"
-          elsif qr_data.is_a?(String) && qr_data.start_with?('data:image')
-            connection_data[:qr_data_url] = qr_data
+          elsif qr_data.is_a?(String)
+            base64_qr = qr_data
+          end
+          
+          if base64_qr.present?
+            # Check if base64 already has data URI prefix
+            if base64_qr.start_with?('data:image')
+              connection_data[:qr_data_url] = base64_qr
+            else
+              connection_data[:qr_data_url] = "data:image/png;base64,#{base64_qr}"
+            end
           end
         end
       rescue StandardError => e
