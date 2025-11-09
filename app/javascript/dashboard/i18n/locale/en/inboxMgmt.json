@@ -233,7 +233,9 @@
           "BAILEYS": "Baileys",
           "BAILEYS_DESC": "Connect via non-official API Baileys",
           "ZAPI": "Z-API",
-          "ZAPI_DESC": "Connect via non-official API Z-API"
+          "ZAPI_DESC": "Connect via non-official API Z-API",
+          "WAHA": "WAHA",
+          "WAHA_DESC": "Connect via WAHA (WhatsApp HTTP API)"
         },
         "SELECT_PROVIDER": {
           "TITLE": "Select your API provider",
@@ -302,6 +304,21 @@
         "CLIENT_TOKEN": {
           "LABEL": "Security Token",
           "PLACEHOLDER": "Please enter your Security Token (see Security tab on Z-API dashboard)",
+          "ERROR": "This field is required"
+        },
+        "API_URL": {
+          "LABEL": "API URL",
+          "PLACEHOLDER": "Please enter your WAHA API URL (e.g. http://localhost:3000)",
+          "ERROR": "Please enter a valid URL"
+        },
+        "ADMIN_TOKEN": {
+          "LABEL": "Admin Token",
+          "PLACEHOLDER": "Please enter your WAHA admin token",
+          "ERROR": "This field is required"
+        },
+        "SESSION_NAME": {
+          "LABEL": "Session Name",
+          "PLACEHOLDER": "Please enter a session name (e.g. default)",
           "ERROR": "This field is required"
         },
         "ADVANCED_OPTIONS": "Advanced options",
