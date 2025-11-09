@@ -34,6 +34,8 @@ const {
   isAWhatsAppCloudChannel,
   isAWhatsAppBaileysChannel,
   isAWhatsAppZapiChannel,
+  isAWhatsAppWahaChannel,
+  isAWhatsAppEvolutionChannel,
   isATwilioChannel,
   isASmsInbox,
   isALineChannel,
@@ -93,7 +95,7 @@ const message = computed(() => {
     )}`;
   }
 
-  if (isAWhatsAppBaileysChannel.value || isAWhatsAppZapiChannel.value) {
+  if (isAWhatsAppBaileysChannel.value || isAWhatsAppZapiChannel.value || isAWhatsAppWahaChannel.value || isAWhatsAppEvolutionChannel.value) {
     return `${t('INBOX_MGMT.FINISH.MESSAGE')}. ${t(
       'INBOX_MGMT.ADD.WHATSAPP.EXTERNAL_PROVIDER.SUBTITLE'
     )}`;
@@ -235,7 +237,7 @@ onMounted(() => {
           />
         </div>
         <div
-          v-if="isAWhatsAppBaileysChannel || isAWhatsAppZapiChannel"
+          v-if="isAWhatsAppBaileysChannel || isAWhatsAppZapiChannel || isAWhatsAppWahaChannel || isAWhatsAppEvolutionChannel"
           class="w-[50%] max-w-[50%] ml-[25%]"
         >
           <NextButton @click="onOpenLinkDeviceModal">
@@ -267,6 +269,8 @@ onMounted(() => {
             isAWhatsAppChannel &&
             !isAWhatsAppBaileysChannel &&
             !isAWhatsAppZapiChannel &&
+            !isAWhatsAppWahaChannel &&
+            !isAWhatsAppEvolutionChannel &&
             qrCodes.whatsapp
           "
           class="flex flex-col gap-3 items-center mt-8"

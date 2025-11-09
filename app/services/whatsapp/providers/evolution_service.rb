@@ -334,6 +334,12 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
     whatsapp_channel.provider_config['admin_token'] ||= ENV.fetch('EVOLUTION_ADMIN_TOKEN', nil)
     whatsapp_channel.save! if whatsapp_channel.changed?
 
+    if api_base_path.blank? || admin_token.blank? || instance_name.blank?
+      error_message = 'Evolution API setup aborted: missing api_url, admin_token, or instance_name'
+      Rails.logger.error error_message
+      return { ok: false, error: error_message }
+    end
+
     remove_existing_instance
 
     response = HTTParty.post(
@@ -343,12 +349,24 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
     )
 
     if response.success?
-      whatsapp_channel.update_provider_connection!(response.parsed_response)
+      parsed_response = response.parsed_response
+      whatsapp_channel.update_provider_connection!(parsed_response)
+      
+      # Configure webhook after instance creation
+      webhook_result = configure_webhook
+      unless webhook_result.is_a?(Hash) && webhook_result[:ok]
+        Rails.logger.warn "Evolution API webhook configuration warning: #{webhook_result[:error]}"
+      end
+
+      { ok: true, response: parsed_response }
     else
-      Rails.logger.error "Evolution API setup error: #{response.code} - #{response.body}"
+      error_message = error_message(response)
+      Rails.logger.error "Evolution API setup error: #{response.code} - #{error_message}"
+      { ok: false, error: error_message.presence || "HTTP #{response.code}" }
     end
   rescue StandardError => e
     Rails.logger.error "Evolution API setup exception: #{e.message}"
+    { ok: false, error: e.message }
   end
 
   # Build recipient payload supporting 1:1 numbers and group remoteJids (…@g.us)
@@ -392,7 +410,7 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
       instanceName: instance_name,
       number: whatsapp_channel.phone_number.delete('+'),
       integration: 'WHATSAPP-BAILEYS',
-      qrcode: false,
+      qrcode: true,
       webhook: {
         enabled: true,
         url: "#{ENV.fetch('FRONTEND_URL', nil)}/webhooks/whatsapp/#{whatsapp_channel.phone_number}",

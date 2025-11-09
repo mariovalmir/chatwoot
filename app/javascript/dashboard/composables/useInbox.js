@@ -131,6 +131,20 @@ export const useInbox = (inboxId = null) => {
     );
   });
 
+  const isAWhatsAppWahaChannel = computed(() => {
+    return (
+      channelType.value === INBOX_TYPES.WHATSAPP &&
+      whatsAppAPIProvider.value === 'waha'
+    );
+  });
+
+  const isAWhatsAppEvolutionChannel = computed(() => {
+    return (
+      channelType.value === INBOX_TYPES.WHATSAPP &&
+      whatsAppAPIProvider.value === 'evolution'
+    );
+  });
+
   const isAWhatsAppChannel = computed(() => {
     return (
       channelType.value === INBOX_TYPES.WHATSAPP ||
@@ -163,6 +177,8 @@ export const useInbox = (inboxId = null) => {
     is360DialogWhatsAppChannel,
     isAWhatsAppBaileysChannel,
     isAWhatsAppZapiChannel,
+    isAWhatsAppWahaChannel,
+    isAWhatsAppEvolutionChannel,
     isAnEmailChannel,
     isAnInstagramChannel,
     isAVoiceChannel,
