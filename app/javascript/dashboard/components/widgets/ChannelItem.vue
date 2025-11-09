@@ -32,16 +32,14 @@ const isActive = computed(() => {
     return props.enabledFeatures.channel_website;
   }
   if (key === 'facebook') {
-    return props.enabledFeatures.channel_facebook && hasFbConfigured.value;
+    return props.enabledFeatures.channel_facebook;
   }
   if (key === 'email') {
     return props.enabledFeatures.channel_email;
   }
 
   if (key === 'instagram') {
-    return (
-      props.enabledFeatures.channel_instagram && hasInstagramConfigured.value
-    );
+    return props.enabledFeatures.channel_instagram;
   }
 
   if (key === 'voice') {
