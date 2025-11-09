@@ -66,8 +66,27 @@ class Whatsapp::Providers::WahaService < Whatsapp::Providers::BaseService
   end
 
   def validate_provider_config?
-    return false if api_base_path.blank?
-    return false if admin_token.blank?
+    # Check if required configuration is present
+    if api_base_path.blank?
+      error_message = if whatsapp_channel.provider_config['api_url'].blank? && DEFAULT_URL.blank?
+                        'API URL is required. Either provide it in the form or set WAHA_PROVIDER_DEFAULT_URL environment variable'
+                      else
+                        'API URL is invalid'
+                      end
+      Rails.logger.warn "Waha API validation failed: #{error_message}"
+      return false
+    end
+
+    if admin_token.blank?
+      error_message = if whatsapp_channel.provider_config['admin_token'].blank? && DEFAULT_API_KEY.blank?
+                        'Admin Token is required. Either provide it in the form or set WAHA_PROVIDER_DEFAULT_API_KEY environment variable'
+                      else
+                        'Admin Token is invalid'
+                      end
+      Rails.logger.warn "Waha API validation failed: #{error_message}"
+      return false
+    end
+
     return false if session_name.blank?
 
     return true if server_status_available?
