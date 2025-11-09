@@ -167,7 +167,9 @@ export default {
         this.shouldShowWhatsAppConfiguration ||
         this.isAWebWidgetInbox ||
         this.isAWhatsAppBaileysChannel ||
-        this.isAWhatsAppZapiChannel
+        this.isAWhatsAppZapiChannel ||
+        this.isAWhatsAppWahaChannel ||
+        this.isAWhatsAppEvolutionChannel
       ) {
         visibleToAllChannelTabs = [
           ...visibleToAllChannelTabs,
