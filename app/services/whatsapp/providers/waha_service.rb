@@ -30,6 +30,41 @@ class Whatsapp::Providers::WahaService < Whatsapp::Providers::BaseService
     whatsapp_channel.mark_message_templates_updated
   end
 
+  def received_messages(phone_number, messages)
+    @phone_number = phone_number
+
+    # WAHA uses sendSeen endpoint to mark messages as read
+    messages.each do |message|
+      next unless message.incoming?
+
+      begin
+        # Get the chatId from contact_inbox source_id
+        chat_id = message.conversation&.contact_inbox&.source_id
+        next if chat_id.blank?
+
+        response = HTTParty.post(
+          "#{api_base_path}/sendSeen",
+          headers: api_headers,
+          body: {
+            session: session_name,
+            chatId: chat_id,
+            messageId: message.source_id,
+            participant: nil
+          }.to_json,
+          timeout: 10
+        )
+
+        unless response.success?
+          Rails.logger.warn "WAHA API: Failed to mark message as read: #{response.code} - #{response.body}"
+        end
+      rescue StandardError => e
+        Rails.logger.error "WAHA API: Error marking message as read: #{e.message}"
+      end
+    end
+
+    true
+  end
+
   def validate_provider_config?
     return false if api_base_path.blank?
     return false if admin_token.blank?

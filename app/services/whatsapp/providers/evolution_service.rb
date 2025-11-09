@@ -47,6 +47,42 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
     whatsapp_channel.mark_message_templates_updated
   end
 
+  def received_messages(phone_number, messages)
+    @phone_number = phone_number
+
+    # Evolution API uses markMessageAsRead endpoint
+    messages.each do |message|
+      next unless message.incoming?
+
+      begin
+        # Get the remoteJid from contact_inbox source_id
+        remote_jid = message.conversation&.contact_inbox&.source_id
+        next if remote_jid.blank?
+
+        response = HTTParty.post(
+          "#{api_base_path}/chat/markMessageAsRead/#{instance_name}",
+          headers: api_headers,
+          body: {
+            readMessages: [{
+              id: message.source_id,
+              fromMe: false,
+              remoteJid: remote_jid
+            }]
+          }.to_json,
+          timeout: 10
+        )
+
+        unless response.success?
+          Rails.logger.warn "Evolution API: Failed to mark message as read: #{response.code} - #{response.body}"
+        end
+      rescue StandardError => e
+        Rails.logger.error "Evolution API: Error marking message as read: #{e.message}"
+      end
+    end
+
+    true
+  end
+
   def validate_provider_config?
     return false if api_base_path.blank?
     return false if admin_token.blank?
