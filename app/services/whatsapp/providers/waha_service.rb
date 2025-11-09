@@ -3,7 +3,10 @@ require 'cgi'
 require 'uri'
 
 class Whatsapp::Providers::WahaService < Whatsapp::Providers::BaseService
-  SUPPORTED_WEBHOOK_EVENTS = %w[message message.any message.edited message.revoked message.ack message.reaction session.status].freeze
+  DEFAULT_URL = ENV.fetch('WAHA_PROVIDER_DEFAULT_URL', nil)
+  DEFAULT_API_KEY = ENV.fetch('WAHA_PROVIDER_DEFAULT_API_KEY', nil)
+
+  SUPPORTED _WEBHOOK_EVENTS = %w[message message.any message.edited message.revoked message.ack message.reaction session.status].freeze
   DEFAULT_WEBHOOK_EVENTS = %w[message.any message.edited message.revoked message.ack message.reaction session.status].freeze
 
   def send_message(phone_number, message)
@@ -312,15 +315,15 @@ class Whatsapp::Providers::WahaService < Whatsapp::Providers::BaseService
 
   def ensure_provider_defaults!
     config = whatsapp_channel.provider_config
-    config['api_url'] ||= ENV.fetch('WAHA_API_URL', nil)
-    config['admin_token'] ||= ENV.fetch('WAHA_ADMIN_TOKEN', nil)
-    config['session_name'] ||= config['instance_name'] || ENV.fetch('WAHA_SESSION_NAME', nil) || ENV.fetch('WAHA_INSTANCE_NAME', nil)
+    config['api_url'] ||= DEFAULT_URL
+    config['admin_token'] ||= DEFAULT_API_KEY
+    config['session_name'] ||= config['instance_name'] || "chatwoot_#{whatsapp_channel.phone_number}"
     whatsapp_channel.provider_config = config
     whatsapp_channel.save! if whatsapp_channel.changed?
   end
 
   def api_base_path
-    base = whatsapp_channel.provider_config['api_url'].presence || ENV.fetch('WAHA_API_URL', nil)
+    base = whatsapp_channel.provider_config['api_url'].presence || DEFAULT_URL
     return '' if base.blank?
 
     normalized = base.chomp('/')
@@ -328,12 +331,12 @@ class Whatsapp::Providers::WahaService < Whatsapp::Providers::BaseService
   end
 
   def admin_token
-    whatsapp_channel.provider_config['admin_token'].presence || ENV.fetch('WAHA_ADMIN_TOKEN', nil)
+    whatsapp_channel.provider_config['admin_token'].presence || DEFAULT_API_KEY
   end
 
   def session_name
     config = whatsapp_channel.provider_config
-    (config['session_name'].presence || config['instance_name'].presence || ENV.fetch('WAHA_SESSION_NAME', nil) || ENV.fetch('WAHA_INSTANCE_NAME', nil)).to_s
+    (config['session_name'].presence || config['instance_name'].presence || "chatwoot_#{whatsapp_channel.phone_number}").to_s
   end
 
   def send_text_message(phone_number, message, override_text = nil)

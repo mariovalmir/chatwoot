@@ -1,6 +1,9 @@
 require 'base64'
 
 class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
+  DEFAULT_URL = ENV.fetch('EVOLUTION_PROVIDER_DEFAULT_URL', nil)
+  DEFAULT_API_KEY = ENV.fetch('EVOLUTION_PROVIDER_DEFAULT_API_KEY', nil)
+
   WEBHOOK_EVENTS = %w[
     QRCODE_UPDATED
     MESSAGES_SET
@@ -85,15 +88,15 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
   private
 
   def api_base_path
-    (whatsapp_channel.provider_config['api_url'].presence || ENV.fetch('EVOLUTION_API_URL', nil)).to_s.chomp('/')
+    (whatsapp_channel.provider_config['api_url'].presence || DEFAULT_URL).to_s.chomp('/')
   end
 
   def admin_token
-    whatsapp_channel.provider_config['admin_token'].presence || ENV.fetch('EVOLUTION_ADMIN_TOKEN', nil)
+    whatsapp_channel.provider_config['admin_token'].presence || DEFAULT_API_KEY
   end
 
   def instance_name
-    whatsapp_channel.provider_config['instance_name'].presence || ENV.fetch('EVOLUTION_INSTANCE_NAME', nil)
+    whatsapp_channel.provider_config['instance_name'].presence || "chatwoot_#{whatsapp_channel.phone_number}"
   end
 
   def send_delay_ms
@@ -330,8 +333,8 @@ class Whatsapp::Providers::EvolutionService < Whatsapp::Providers::BaseService
   end
 
   def setup_channel_provider
-    whatsapp_channel.provider_config['api_url'] ||= ENV.fetch('EVOLUTION_API_URL', nil)
-    whatsapp_channel.provider_config['admin_token'] ||= ENV.fetch('EVOLUTION_ADMIN_TOKEN', nil)
+    whatsapp_channel.provider_config['api_url'] ||= DEFAULT_URL
+    whatsapp_channel.provider_config['admin_token'] ||= DEFAULT_API_KEY
     whatsapp_channel.save! if whatsapp_channel.changed?
 
     if api_base_path.blank? || admin_token.blank? || instance_name.blank?
