@@ -6,7 +6,7 @@ class Whatsapp::Providers::WahaService < Whatsapp::Providers::BaseService
   DEFAULT_URL = ENV.fetch('WAHA_PROVIDER_DEFAULT_URL', nil)
   DEFAULT_API_KEY = ENV.fetch('WAHA_PROVIDER_DEFAULT_API_KEY', nil)
 
-  SUPPORTED _WEBHOOK_EVENTS = %w[message message.any message.edited message.revoked message.ack message.reaction session.status].freeze
+  SUPPORTED_WEBHOOK_EVENTS = %w[message message.any message.edited message.revoked message.ack message.reaction session.status].freeze
   DEFAULT_WEBHOOK_EVENTS = %w[message.any message.edited message.revoked message.ack message.reaction session.status].freeze
 
   def send_message(phone_number, message)
