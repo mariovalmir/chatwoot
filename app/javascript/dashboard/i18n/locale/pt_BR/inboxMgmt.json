@@ -233,7 +233,9 @@
           "BAILEYS": "Baileys",
           "BAILEYS_DESC": "Conectar via API não-oficial Baileys",
           "ZAPI": "Z-API",
-          "ZAPI_DESC": "Conectar via API não-oficial Z-API"
+          "ZAPI_DESC": "Conectar via API não-oficial Z-API",
+          "WAHA": "WAHA",
+          "WAHA_DESC": "Conectar via WAHA (WhatsApp HTTP API)"
         },
         "SELECT_PROVIDER": {
           "TITLE": "Selecione seu provedor de API",

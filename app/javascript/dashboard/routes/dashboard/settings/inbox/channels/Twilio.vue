@@ -130,20 +130,6 @@ export default {
 
 <template>
   <form class="flex flex-wrap flex-col mx-0" @submit.prevent="createChannel()">
-    <div v-if="isWhatsApp" class="mb-6">
-      <PromoBanner
-        :title="$t('INBOX_MGMT.ADD.WHATSAPP.ZAPI_PROMO.SWITCH_BANNER.TITLE')"
-        :description="
-          $t('INBOX_MGMT.ADD.WHATSAPP.ZAPI_PROMO.SWITCH_BANNER.DESCRIPTION')
-        "
-        variant="info"
-        logo-src="/assets/images/dashboard/channels/z-api/z-api-dark-blue.png"
-        logo-alt="Z-API"
-        :cta-text="$t('INBOX_MGMT.ADD.WHATSAPP.ZAPI_PROMO.SWITCH_BANNER.CTA')"
-        @cta-click="switchToZapi"
-      />
-    </div>
-
     <div class="flex-shrink-0 flex-grow-0">
       <label :class="{ error: v$.channelName.$error }">
         {{ $t('INBOX_MGMT.ADD.TWILIO.CHANNEL_NAME.LABEL') }}

@@ -120,29 +120,6 @@ const handleManualLinkClick = () => {
           @click="selectProvider(provider.key)"
         />
       </div>
-
-      <div class="mt-6 relative overflow-visible">
-        <img
-          src="~dashboard/assets/images/curved-arrow.svg"
-          alt=""
-          class="absolute -top-12 right-0 w-20 h-20 pointer-events-none z-10 scale-y-[-1] -rotate-45"
-        />
-        <PromoBanner
-          :title="
-            $t('INBOX_MGMT.ADD.WHATSAPP.SELECT_PROVIDER.ZAPI_PROMO.TITLE')
-          "
-          :description="
-            $t('INBOX_MGMT.ADD.WHATSAPP.SELECT_PROVIDER.ZAPI_PROMO.DESCRIPTION')
-          "
-          variant="success"
-          logo-src="/assets/images/dashboard/channels/z-api/z-api-dark-green.png"
-          logo-alt="Z-API"
-          :cta-text="
-            $t('INBOX_MGMT.ADD.WHATSAPP.SELECT_PROVIDER.ZAPI_PROMO.CTA')
-          "
-          @cta-click="selectProvider(PROVIDER_TYPES.ZAPI)"
-        />
-      </div>
     </div>
 
     <div v-else-if="showConfiguration">

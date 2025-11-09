@@ -79,21 +79,6 @@ const createChannel = async () => {
 
 <template>
   <form class="flex flex-wrap mx-0" @submit.prevent="createChannel()">
-    <div class="w-full mb-6">
-      <PromoBanner
-        :title="$t('INBOX_MGMT.ADD.WHATSAPP.ZAPI_PROMO.SETUP_BANNER.TITLE')"
-        :description="
-          $t('INBOX_MGMT.ADD.WHATSAPP.ZAPI_PROMO.SETUP_BANNER.DESCRIPTION')
-        "
-        variant="success"
-        logo-src="/assets/images/dashboard/channels/z-api/z-api-dark-green.png"
-        logo-alt="Z-API"
-        :cta-text="$t('INBOX_MGMT.ADD.WHATSAPP.ZAPI_PROMO.SETUP_BANNER.CTA')"
-        cta-external
-        :cta-link="zapiAffiliateUrl"
-      />
-    </div>
-
     <div class="w-[65%] flex-shrink-0 flex-grow-0 max-w-[65%]">
       <label :class="{ error: v$.inboxName.$error }">
         {{ $t('INBOX_MGMT.ADD.WHATSAPP.INBOX_NAME.LABEL') }}
