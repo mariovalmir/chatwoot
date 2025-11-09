@@ -855,7 +855,15 @@
       "WHATSAPP_CLIENT_TOKEN_TITLE": "Security Token",
       "WHATSAPP_CLIENT_TOKEN_SUBHEADER": "Your Z-API Client Token (see Security tab on Z-API dashboard).",
       "WHATSAPP_CLIENT_TOKEN_UPDATE_TITLE": "Update Security Token",
-      "WHATSAPP_CLIENT_TOKEN_UPDATE_SUBHEADER": "Enter the new Security Token here"
+      "WHATSAPP_CLIENT_TOKEN_UPDATE_SUBHEADER": "Enter the new Security Token here",
+      "WAHA_API_URL_TITLE": "WAHA API URL",
+      "WAHA_API_URL_SUBHEADER": "Your WAHA API URL endpoint.",
+      "WAHA_SESSION_NAME_TITLE": "Session Name",
+      "WAHA_SESSION_NAME_SUBHEADER": "Your WAHA session name.",
+      "EVOLUTION_API_URL_TITLE": "Evolution API URL",
+      "EVOLUTION_API_URL_SUBHEADER": "Your Evolution API URL endpoint.",
+      "EVOLUTION_INSTANCE_NAME_TITLE": "Instance Name",
+      "EVOLUTION_INSTANCE_NAME_SUBHEADER": "Your Evolution instance name."
     },
     "HELP_CENTER": {
       "LABEL": "Help Center",
