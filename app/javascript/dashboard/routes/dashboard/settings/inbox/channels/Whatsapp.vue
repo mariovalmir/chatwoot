@@ -118,7 +118,7 @@ const handleManualLinkClick = () => {
         </p>
       </div>
 
-      <div class="flex gap-6 justify-start">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <ChannelSelector
           v-for="provider in availableProviders"
           :key="provider.key"

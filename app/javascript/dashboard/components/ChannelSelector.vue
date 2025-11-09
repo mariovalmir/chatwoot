@@ -23,7 +23,7 @@ defineProps({
 
 <template>
   <button
-    class="relative bg-n-solid-1 gap-6 cursor-pointer rounded-2xl flex flex-col justify-start transition-all duration-200 ease-in -m-px py-6 px-5 items-start border border-solid border-n-weak"
+    class="relative bg-n-solid-1 gap-6 cursor-pointer rounded-2xl flex flex-col justify-start transition-all duration-200 ease-in -m-px py-8 px-6 items-start border border-solid border-n-weak min-w-[280px] flex-1 max-w-[320px]"
     :class="{
       'hover:enabled:border-n-blue-9 hover:enabled:shadow-md disabled:opacity-60 disabled:cursor-not-allowed':
         !isComingSoon,
@@ -31,16 +31,16 @@ defineProps({
     }"
   >
     <div
-      class="flex size-10 items-center justify-center rounded-full bg-n-alpha-2"
+      class="flex size-12 items-center justify-center rounded-full bg-n-alpha-2"
     >
-      <Icon :icon="icon" class="text-n-slate-10 size-6" />
+      <Icon :icon="icon" class="text-n-slate-10 size-7" />
     </div>
 
-    <div class="flex flex-col items-start gap-1.5">
-      <h3 class="text-n-slate-12 text-sm text-start font-medium capitalize">
+    <div class="flex flex-col items-start gap-2 w-full">
+      <h3 class="text-n-slate-12 text-base text-start font-semibold">
         {{ title }}
       </h3>
-      <p class="text-n-slate-11 text-start text-sm">
+      <p class="text-n-slate-11 text-start text-sm leading-relaxed">
         {{ description }}
       </p>
     </div>
