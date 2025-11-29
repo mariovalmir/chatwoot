@@ -116,6 +116,9 @@ export default {
       if (this.isAWhatsAppZapiChannel) {
         return this.$t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.ZAPI');
       }
+      if (this.isAWhatsAppWuzapiChannel) {
+        return this.$t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.WUZAPI');
+      }
       return '';
     },
     tabs() {
@@ -169,7 +172,8 @@ export default {
         this.isAWhatsAppBaileysChannel ||
         this.isAWhatsAppZapiChannel ||
         this.isAWhatsAppWahaChannel ||
-        this.isAWhatsAppEvolutionChannel
+        this.isAWhatsAppEvolutionChannel ||
+        this.isAWhatsAppWuzapiChannel
       ) {
         visibleToAllChannelTabs = [
           ...visibleToAllChannelTabs,

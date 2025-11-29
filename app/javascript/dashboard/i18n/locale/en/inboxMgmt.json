@@ -237,7 +237,9 @@
           "WAHA": "WAHA",
           "WAHA_DESC": "Connect via WAHA (WhatsApp HTTP API)",
           "EVOLUTION": "Evolution API",
-          "EVOLUTION_DESC": "Connect via Evolution API (WhatsApp HTTP API)"
+          "EVOLUTION_DESC": "Connect via Evolution API (WhatsApp HTTP API)",
+          "WUZAPI": "Wuzapi",
+          "WUZAPI_DESC": "Connect via Wuzapi (WhatsApp REST API)"
         },
         "SELECT_PROVIDER": {
           "TITLE": "Select your API provider",
