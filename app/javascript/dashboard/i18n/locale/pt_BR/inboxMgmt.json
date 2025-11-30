@@ -235,7 +235,11 @@
           "ZAPI": "Z-API",
           "ZAPI_DESC": "Conectar via API não-oficial Z-API",
           "WAHA": "WAHA",
-          "WAHA_DESC": "Conectar via WAHA (WhatsApp HTTP API)"
+          "WAHA_DESC": "Conectar via WAHA (WhatsApp HTTP API)",
+          "EVOLUTION": "Evolution API",
+          "EVOLUTION_DESC": "Conectar via Evolution API (WhatsApp HTTP API)",
+          "WUZAPI": "Wuzapi",
+          "WUZAPI_DESC": "Conectar via Wuzapi (WhatsApp REST API)"
         },
         "SELECT_PROVIDER": {
           "TITLE": "Selecione seu provedor de API",
@@ -818,7 +822,17 @@
       "WHATSAPP_CLIENT_TOKEN_TITLE": "Token de Segurança",
       "WHATSAPP_CLIENT_TOKEN_SUBHEADER": "Seu Token de Segurança Z-API (veja a aba Segurança no painel do Z-API).",
       "WHATSAPP_CLIENT_TOKEN_UPDATE_TITLE": "Atualizar Token de Segurança",
-      "WHATSAPP_CLIENT_TOKEN_UPDATE_SUBHEADER": "Digite o novo Token de Segurança aqui"
+      "WHATSAPP_CLIENT_TOKEN_UPDATE_SUBHEADER": "Digite o novo Token de Segurança aqui",
+      "WAHA_API_URL_TITLE": "URL da API WAHA",
+      "WAHA_API_URL_SUBHEADER": "Seu endpoint de URL da API WAHA.",
+      "WAHA_SESSION_NAME_TITLE": "Nome da Sessão",
+      "WAHA_SESSION_NAME_SUBHEADER": "Seu nome de sessão WAHA.",
+      "EVOLUTION_API_URL_TITLE": "URL da API Evolution",
+      "EVOLUTION_API_URL_SUBHEADER": "Seu endpoint de URL da API Evolution.",
+      "EVOLUTION_INSTANCE_NAME_TITLE": "Nome da Instância",
+      "EVOLUTION_INSTANCE_NAME_SUBHEADER": "Seu nome de instância Evolution.",
+      "WUZAPI_API_URL_TITLE": "URL da API Wuzapi",
+      "WUZAPI_API_URL_SUBHEADER": "Seu endpoint de URL da API Wuzapi."
     },
     "HELP_CENTER": {
       "LABEL": "Centro de Ajuda",
@@ -1082,6 +1096,9 @@
       "WHATSAPP": "WhatsApp",
       "WHATSAPP_BAILEYS": "WhatsApp - Baileys",
       "WHATSAPP_ZAPI": "WhatsApp - Z-API",
+      "WHATSAPP_WAHA": "WhatsApp - WAHA",
+      "WHATSAPP_EVOLUTION": "WhatsApp - Evolution",
+      "WHATSAPP_WUZAPI": "WhatsApp - Wuzapi",
       "SMS": "SMS",
       "EMAIL": "e-mail",
       "TELEGRAM": "Telegram",
