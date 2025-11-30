@@ -37,6 +37,7 @@ const {
   isAWhatsAppZapiChannel,
   isAWhatsAppWahaChannel,
   isAWhatsAppEvolutionChannel,
+  isAWhatsAppWuzapiChannel,
   isATwilioChannel,
   isASmsInbox,
   isALineChannel,
@@ -96,7 +97,7 @@ const message = computed(() => {
     )}`;
   }
 
-  if (isAWhatsAppBaileysChannel.value || isAWhatsAppZapiChannel.value || isAWhatsAppWahaChannel.value || isAWhatsAppEvolutionChannel.value) {
+  if (isAWhatsAppBaileysChannel.value || isAWhatsAppZapiChannel.value || isAWhatsAppWahaChannel.value || isAWhatsAppEvolutionChannel.value || isAWhatsAppWuzapiChannel.value) {
     return `${t('INBOX_MGMT.FINISH.MESSAGE')}. ${t(
       'INBOX_MGMT.ADD.WHATSAPP.EXTERNAL_PROVIDER.SUBTITLE'
     )}`;
@@ -238,7 +239,7 @@ onMounted(() => {
           />
         </div>
         <div
-          v-if="isAWhatsAppBaileysChannel || isAWhatsAppZapiChannel || isAWhatsAppWahaChannel || isAWhatsAppEvolutionChannel"
+          v-if="isAWhatsAppBaileysChannel || isAWhatsAppZapiChannel || isAWhatsAppWahaChannel || isAWhatsAppEvolutionChannel || isAWhatsAppWuzapiChannel"
           class="w-[50%] max-w-[50%] ml-[25%]"
         >
           <NextButton @click="onOpenLinkDeviceModal">

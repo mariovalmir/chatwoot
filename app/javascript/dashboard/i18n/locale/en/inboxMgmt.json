@@ -305,6 +305,11 @@
           "PLACEHOLDER": "Please enter your instance Token",
           "ERROR": "This field is required"
         },
+        "API_URL": {
+          "LABEL": "API URL",
+          "PLACEHOLDER": "http://localhost:8080",
+          "ERROR": "This field is required"
+        },
         "CLIENT_TOKEN": {
           "LABEL": "Security Token",
           "PLACEHOLDER": "Please enter your Security Token (see Security tab on Z-API dashboard)",

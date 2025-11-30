@@ -113,6 +113,12 @@ export default {
         this.whatsAppAPIProvider === 'evolution'
       );
     },
+    isAWhatsAppWuzapiChannel() {
+      return (
+        this.channelType === INBOX_TYPES.WHATSAPP &&
+        this.whatsAppAPIProvider === 'wuzapi'
+      );
+    },
     chatAdditionalAttributes() {
       const { additional_attributes: additionalAttributes } = this.chat || {};
       return additionalAttributes || {};

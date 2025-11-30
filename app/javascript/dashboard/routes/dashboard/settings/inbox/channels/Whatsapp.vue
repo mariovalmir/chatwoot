@@ -11,6 +11,7 @@ import BaileysWhatsapp from './BaileysWhatsapp.vue';
 import ZapiWhatsapp from './ZapiWhatsapp.vue';
 import WahaWhatsapp from './WahaWhatsapp.vue';
 import EvolutionWhatsapp from './EvolutionWhatsapp.vue';
+import WuzapiWhatsapp from './WuzapiWhatsapp.vue';
 import PromoBanner from 'dashboard/components-next/banner/PromoBanner.vue';
 
 const route = useRoute();
@@ -28,6 +29,7 @@ const PROVIDER_TYPES = {
   ZAPI: 'zapi',
   WAHA: 'waha',
   EVOLUTION: 'evolution',
+  WUZAPI: 'wuzapi',
 };
 
 const hasWhatsappAppId = computed(() => {
@@ -80,6 +82,12 @@ const availableProviders = computed(() => {
       title: t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.EVOLUTION'),
       description: t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.EVOLUTION_DESC'),
       icon: 'i-woot-whatsapp',
+    },
+    {
+      key: PROVIDER_TYPES.WUZAPI,
+      title: t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.WUZAPI'),
+      description: t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.WUZAPI_DESC'),
+      icon: 'i-woot-wuzapi',
     },
   ];
 
@@ -185,6 +193,9 @@ const handleManualLinkClick = () => {
         <WahaWhatsapp v-else-if="selectedProvider === PROVIDER_TYPES.WAHA" />
         <EvolutionWhatsapp
           v-else-if="selectedProvider === PROVIDER_TYPES.EVOLUTION"
+        />
+        <WuzapiWhatsapp
+          v-else-if="selectedProvider === PROVIDER_TYPES.WUZAPI"
         />
       </div>
     </div>
