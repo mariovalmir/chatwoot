@@ -292,6 +292,12 @@
           "PLACEHOLDER": "Se o provedor não está rodando localmente, por favor, insira a URL do provedor",
           "ERROR": "Por favor, insira uma URL válida"
         },
+        "API_URL": {
+          "LABEL": "URL da API",
+          "PLACEHOLDER": "Insira a URL da API Wuzapi (ex: http://localhost:8080)",
+          "ERROR": "Por favor, insira uma URL válida",
+          "HELP": "Opcional se WUZAPI_PROVIDER_DEFAULT_URL estiver configurado no servidor"
+        },
         "MARK_AS_READ": {
           "LABEL": "Enviar confirmações de leitura"
         },
@@ -303,7 +309,8 @@
         "TOKEN": {
           "LABEL": "Token",
           "PLACEHOLDER": "Por favor, insira o Token da sua instância",
-          "ERROR": "Este campo é obrigatório"
+          "ERROR": "Este campo é obrigatório",
+          "HELP": "Opcional se WUZAPI_PROVIDER_DEFAULT_API_KEY estiver configurado no servidor"
         },
         "CLIENT_TOKEN": {
           "LABEL": "Token de Segurança",

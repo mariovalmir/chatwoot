@@ -292,6 +292,12 @@
           "PLACEHOLDER": "If provider is not running locally, please provide the URL",
           "ERROR": "Please enter a valid URL"
         },
+        "API_URL": {
+          "LABEL": "API URL",
+          "PLACEHOLDER": "Enter the Wuzapi API URL (e.g., http://localhost:8080)",
+          "ERROR": "Please enter a valid URL",
+          "HELP": "Optional if WUZAPI_PROVIDER_DEFAULT_URL is configured on the server"
+        },
         "MARK_AS_READ": {
           "LABEL": "Send read receipts"
         },
@@ -303,7 +309,8 @@
         "TOKEN": {
           "LABEL": "Token",
           "PLACEHOLDER": "Please enter your instance Token",
-          "ERROR": "This field is required"
+          "ERROR": "This field is required",
+          "HELP": "Optional if WUZAPI_PROVIDER_DEFAULT_API_KEY is configured on the server"
         },
         "API_URL": {
           "LABEL": "API URL",

@@ -5,8 +5,9 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useVuelidate } from '@vuelidate/core';
 import { useAlert } from 'dashboard/composables';
-import { required } from '@vuelidate/validators';
+import { required, requiredIf } from '@vuelidate/validators';
 import { isPhoneE164OrEmpty } from 'shared/helpers/Validators';
+import { isValidURL } from '../../../../../helper/URLHelper';
 
 import NextButton from 'dashboard/components-next/button/Button.vue';
 
@@ -24,8 +25,11 @@ const uiFlags = computed(() => store.getters['inboxes/getUIFlags']);
 const rules = computed(() => ({
   inboxName: { required },
   phoneNumber: { required, isPhoneE164OrEmpty },
-  apiUrl: { required },
-  token: { required },
+  apiUrl: {
+    isValidURL: value => !value || isValidURL(value),
+    requiredIf: requiredIf(token),
+  },
+  token: { requiredIf: requiredIf(apiUrl) },
 }));
 
 const v$ = useVuelidate(rules, {
@@ -42,16 +46,20 @@ const createChannel = async () => {
   }
 
   try {
+    const providerConfig = {};
+
+    if (apiUrl.value || token.value) {
+      providerConfig.api_url = apiUrl.value;
+      providerConfig.token = token.value;
+    }
+
     const whatsappChannel = await store.dispatch('inboxes/createChannel', {
       name: inboxName.value,
       channel: {
         type: 'whatsapp',
         phone_number: phoneNumber.value,
         provider: 'wuzapi',
-        provider_config: {
-          api_url: apiUrl.value,
-          token: token.value,
-        },
+        provider_config: providerConfig,
       },
     });
 
@@ -112,6 +120,9 @@ const createChannel = async () => {
         <span v-if="v$.apiUrl.$error" class="message">
           {{ $t('INBOX_MGMT.ADD.WHATSAPP.API_URL.ERROR') }}
         </span>
+        <span class="help-text">
+          {{ $t('INBOX_MGMT.ADD.WHATSAPP.API_URL.HELP') }}
+        </span>
       </label>
     </div>
 
@@ -126,6 +137,9 @@ const createChannel = async () => {
         />
         <span v-if="v$.token.$error" class="message">
           {{ $t('INBOX_MGMT.ADD.WHATSAPP.TOKEN.ERROR') }}
+        </span>
+        <span class="help-text">
+          {{ $t('INBOX_MGMT.ADD.WHATSAPP.TOKEN.HELP') }}
         </span>
       </label>
     </div>
