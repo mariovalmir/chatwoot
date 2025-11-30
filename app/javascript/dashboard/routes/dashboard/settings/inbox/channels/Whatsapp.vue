@@ -87,7 +87,7 @@ const availableProviders = computed(() => {
       key: PROVIDER_TYPES.WUZAPI,
       title: t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.WUZAPI'),
       description: t('INBOX_MGMT.ADD.WHATSAPP.PROVIDERS.WUZAPI_DESC'),
-      icon: 'i-woot-wuzapi',
+      icon: 'i-woot-whatsapp',
     },
   ];
 
