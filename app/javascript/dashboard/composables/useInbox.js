@@ -145,6 +145,13 @@ export const useInbox = (inboxId = null) => {
     );
   });
 
+  const isAWhatsAppWuzapiChannel = computed(() => {
+    return (
+      channelType.value === INBOX_TYPES.WHATSAPP &&
+      whatsAppAPIProvider.value === 'wuzapi'
+    );
+  });
+
   const isAWhatsAppChannel = computed(() => {
     return (
       channelType.value === INBOX_TYPES.WHATSAPP ||
@@ -179,6 +186,7 @@ export const useInbox = (inboxId = null) => {
     isAWhatsAppZapiChannel,
     isAWhatsAppWahaChannel,
     isAWhatsAppEvolutionChannel,
+    isAWhatsAppWuzapiChannel,
     isAnEmailChannel,
     isAnInstagramChannel,
     isAVoiceChannel,
