@@ -5,9 +5,8 @@ import { useStore } from 'vuex';
 import { useI18n } from 'vue-i18n';
 import { useVuelidate } from '@vuelidate/core';
 import { useAlert } from 'dashboard/composables';
-import { required, requiredIf } from '@vuelidate/validators';
+import { required } from '@vuelidate/validators';
 import { isPhoneE164OrEmpty } from 'shared/helpers/Validators';
-import { isValidURL } from '../../../../../helper/URLHelper';
 
 import NextButton from 'dashboard/components-next/button/Button.vue';
 
@@ -17,26 +16,17 @@ const { t } = useI18n();
 
 const inboxName = ref('');
 const phoneNumber = ref('');
-const apiUrl = ref('');
-const token = ref('');
 
 const uiFlags = computed(() => store.getters['inboxes/getUIFlags']);
 
 const rules = computed(() => ({
   inboxName: { required },
   phoneNumber: { required, isPhoneE164OrEmpty },
-  apiUrl: {
-    isValidURL: value => !value || isValidURL(value),
-    requiredIf: requiredIf(token),
-  },
-  token: { requiredIf: requiredIf(apiUrl) },
 }));
 
 const v$ = useVuelidate(rules, {
   inboxName,
   phoneNumber,
-  apiUrl,
-  token,
 });
 
 const createChannel = async () => {
@@ -46,20 +36,13 @@ const createChannel = async () => {
   }
 
   try {
-    const providerConfig = {};
-
-    if (apiUrl.value || token.value) {
-      providerConfig.api_url = apiUrl.value;
-      providerConfig.token = token.value;
-    }
-
     const whatsappChannel = await store.dispatch('inboxes/createChannel', {
       name: inboxName.value,
       channel: {
         type: 'whatsapp',
         phone_number: phoneNumber.value,
         provider: 'wuzapi',
-        provider_config: providerConfig,
+        provider_config: {},
       },
     });
 
@@ -104,42 +87,6 @@ const createChannel = async () => {
         />
         <span v-if="v$.phoneNumber.$error" class="message">
           {{ $t('INBOX_MGMT.ADD.WHATSAPP.PHONE_NUMBER.ERROR') }}
-        </span>
-      </label>
-    </div>
-
-    <div class="w-[65%] flex-shrink-0 flex-grow-0 max-w-[65%]">
-      <label :class="{ error: v$.apiUrl.$error }">
-        {{ $t('INBOX_MGMT.ADD.WHATSAPP.API_URL.LABEL') }}
-        <input
-          v-model="apiUrl"
-          type="text"
-          :placeholder="$t('INBOX_MGMT.ADD.WHATSAPP.API_URL.PLACEHOLDER')"
-          @blur="v$.apiUrl.$touch"
-        />
-        <span v-if="v$.apiUrl.$error" class="message">
-          {{ $t('INBOX_MGMT.ADD.WHATSAPP.API_URL.ERROR') }}
-        </span>
-        <span class="help-text">
-          {{ $t('INBOX_MGMT.ADD.WHATSAPP.API_URL.HELP') }}
-        </span>
-      </label>
-    </div>
-
-    <div class="w-[65%] flex-shrink-0 flex-grow-0 max-w-[65%]">
-      <label :class="{ error: v$.token.$error }">
-        {{ $t('INBOX_MGMT.ADD.WHATSAPP.TOKEN.LABEL') }}
-        <input
-          v-model="token"
-          type="password"
-          :placeholder="$t('INBOX_MGMT.ADD.WHATSAPP.TOKEN.PLACEHOLDER')"
-          @blur="v$.token.$touch"
-        />
-        <span v-if="v$.token.$error" class="message">
-          {{ $t('INBOX_MGMT.ADD.WHATSAPP.TOKEN.ERROR') }}
-        </span>
-        <span class="help-text">
-          {{ $t('INBOX_MGMT.ADD.WHATSAPP.TOKEN.HELP') }}
         </span>
       </label>
     </div>

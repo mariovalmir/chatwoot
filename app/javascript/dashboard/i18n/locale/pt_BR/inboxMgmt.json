@@ -298,6 +298,12 @@
           "ERROR": "Por favor, insira uma URL válida",
           "HELP": "Opcional se WUZAPI_PROVIDER_DEFAULT_URL estiver configurado no servidor"
         },
+        "ADMIN_TOKEN": {
+          "LABEL": "Token Admin (Criação Automática)",
+          "PLACEHOLDER": "Token admin do Wuzapi para criar usuário automaticamente",
+          "ERROR": "Por favor, insira um token válido",
+          "HELP": "Se fornecido, cria automaticamente um usuário no Wuzapi. Use WUZAPI_ADMIN_TOKEN do servidor ou deixe vazio se já tiver um user token."
+        },
         "MARK_AS_READ": {
           "LABEL": "Enviar confirmações de leitura"
         },
@@ -307,10 +313,10 @@
           "ERROR": "Este campo é obrigatório"
         },
         "TOKEN": {
-          "LABEL": "Token",
-          "PLACEHOLDER": "Por favor, insira o Token da sua instância",
+          "LABEL": "Token de Usuário",
+          "PLACEHOLDER": "Token do usuário Wuzapi (deixe vazio para criação automática)",
           "ERROR": "Este campo é obrigatório",
-          "HELP": "Opcional se WUZAPI_PROVIDER_DEFAULT_API_KEY estiver configurado no servidor"
+          "HELP": "Token do usuário Wuzapi. Deixe vazio se fornecer Admin Token para criação automática."
         },
         "CLIENT_TOKEN": {
           "LABEL": "Token de Segurança",

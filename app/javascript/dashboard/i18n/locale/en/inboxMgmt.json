@@ -298,6 +298,12 @@
           "ERROR": "Please enter a valid URL",
           "HELP": "Optional if WUZAPI_PROVIDER_DEFAULT_URL is configured on the server"
         },
+        "ADMIN_TOKEN": {
+          "LABEL": "Admin Token (Auto-Create User)",
+          "PLACEHOLDER": "Wuzapi admin token to automatically create user",
+          "ERROR": "Please enter a valid token",
+          "HELP": "If provided, automatically creates a user in Wuzapi. Use server's WUZAPI_ADMIN_TOKEN or leave empty if you already have a user token."
+        },
         "MARK_AS_READ": {
           "LABEL": "Send read receipts"
         },
@@ -307,10 +313,10 @@
           "ERROR": "This field is required"
         },
         "TOKEN": {
-          "LABEL": "Token",
-          "PLACEHOLDER": "Please enter your instance Token",
+          "LABEL": "User Token",
+          "PLACEHOLDER": "Wuzapi user token (leave empty for auto-creation)",
           "ERROR": "This field is required",
-          "HELP": "Optional if WUZAPI_PROVIDER_DEFAULT_API_KEY is configured on the server"
+          "HELP": "Wuzapi user token. Leave empty if providing Admin Token for auto-creation."
         },
         "API_URL": {
           "LABEL": "API URL",

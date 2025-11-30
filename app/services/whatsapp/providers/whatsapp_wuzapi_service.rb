@@ -3,6 +3,7 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
 
   DEFAULT_URL = ENV.fetch('WUZAPI_PROVIDER_DEFAULT_URL', nil)
   DEFAULT_API_KEY = ENV.fetch('WUZAPI_PROVIDER_DEFAULT_API_KEY', nil)
+  DEFAULT_ADMIN_TOKEN = ENV.fetch('WUZAPI_ADMIN_TOKEN', nil)
 
   def send_template(phone_number, template_info); end
 
@@ -25,6 +26,9 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
   end
 
   def validate_provider_config?
+    # Se só tem admin token, criar usuário automaticamente
+    ensure_user_created if needs_user_creation?
+
     response = HTTParty.get(
       "#{api_base_url}/session/status",
       headers: api_headers,
@@ -173,12 +177,62 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
   private
 
   def api_base_url
-    whatsapp_channel.provider_config['api_url'].presence || DEFAULT_URL || 'http://localhost:8080'
+    url = DEFAULT_URL || 'http://localhost:8080'
+    url = "https://#{url}" unless url.match?(%r{^https?://})
+    url
   end
 
   def api_headers
-    token = whatsapp_channel.provider_config['token'].presence || DEFAULT_API_KEY
+    token = user_token
     { 'Content-Type' => 'application/json', 'Token' => token }
+  end
+
+  def admin_token
+    DEFAULT_ADMIN_TOKEN
+  end
+
+  def user_token
+    whatsapp_channel.provider_config['user_token'].presence || DEFAULT_API_KEY
+  end
+
+  def needs_user_creation?
+    # Se tem admin token mas não tem user token, precisa criar
+    admin_token.present? && user_token.blank?
+  end
+
+  def ensure_user_created
+    return if user_token.present?
+    return unless admin_token.present?
+
+    # Gera token único para o usuário
+    generated_token = "chatwoot_#{whatsapp_channel.inbox_id}_#{SecureRandom.hex(8)}"
+    
+    # Cria usuário no Wuzapi
+    response = HTTParty.post(
+      "#{api_base_url}/admin/users",
+      headers: {
+        'Content-Type' => 'application/json',
+        'Authorization' => admin_token
+      },
+      body: {
+        name: "Chatwoot Inbox #{whatsapp_channel.inbox_id}",
+        token: generated_token
+      }.to_json,
+      timeout: 15
+    )
+
+    if response.success?
+      # Salva o user token gerado no provider_config
+      whatsapp_channel.provider_config['user_token'] = generated_token
+      whatsapp_channel.save!
+      Rails.logger.info "Wuzapi user created: #{generated_token}"
+    else
+      Rails.logger.error "Failed to create Wuzapi user: #{response.code} - #{response.body}"
+      raise ProviderUnavailableError, "Failed to create Wuzapi user"
+    end
+  rescue HTTParty::Error, Net::OpenTimeout => e
+    Rails.logger.error "Wuzapi user creation error: #{e.message}"
+    raise ProviderUnavailableError, "Failed to create Wuzapi user: #{e.message}"
   end
 
   def process_response(response)
