@@ -943,6 +943,54 @@ export default {
       </template>
     </div>
   </div>
+  <div v-else-if="isAWhatsAppWuzapiChannel">
+    <WhatsappLinkDeviceModal
+      v-if="showLinkDeviceModal"
+      :show="showLinkDeviceModal"
+      :on-close="onCloseLinkDeviceModal"
+      :inbox="inbox"
+    />
+    <div class="mx-8">
+      <SettingsSection
+        :title="
+          $t(
+            'INBOX_MGMT.SETTINGS_POPUP.WHATSAPP_MANAGE_PROVIDER_CONNECTION_TITLE'
+          )
+        "
+        :sub-title="
+          $t(
+            'INBOX_MGMT.SETTINGS_POPUP.WHATSAPP_MANAGE_PROVIDER_CONNECTION_SUBHEADER'
+          )
+        "
+      >
+        <div class="flex flex-col gap-2">
+          <InboxName
+            :inbox="inbox"
+            class="!text-lg !m-0"
+            with-phone-number
+            with-provider-connection-status
+          />
+          <NextButton class="w-fit" @click="onOpenLinkDeviceModal">
+            {{
+              $t(
+                'INBOX_MGMT.SETTINGS_POPUP.WHATSAPP_MANAGE_PROVIDER_CONNECTION_BUTTON'
+              )
+            }}
+          </NextButton>
+        </div>
+      </SettingsSection>
+      <template v-if="inbox.provider_config.api_url">
+        <SettingsSection
+          :title="$t('INBOX_MGMT.SETTINGS_POPUP.WUZAPI_API_URL_TITLE')"
+          :sub-title="
+            $t('INBOX_MGMT.SETTINGS_POPUP.WUZAPI_API_URL_SUBHEADER')
+          "
+        >
+          <woot-code :script="inbox.provider_config.api_url" />
+        </SettingsSection>
+      </template>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>

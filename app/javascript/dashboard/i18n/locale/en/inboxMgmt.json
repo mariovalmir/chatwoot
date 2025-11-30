@@ -875,7 +875,9 @@
       "EVOLUTION_API_URL_TITLE": "Evolution API URL",
       "EVOLUTION_API_URL_SUBHEADER": "Your Evolution API URL endpoint.",
       "EVOLUTION_INSTANCE_NAME_TITLE": "Instance Name",
-      "EVOLUTION_INSTANCE_NAME_SUBHEADER": "Your Evolution instance name."
+      "EVOLUTION_INSTANCE_NAME_SUBHEADER": "Your Evolution instance name.",
+      "WUZAPI_API_URL_TITLE": "Wuzapi API URL",
+      "WUZAPI_API_URL_SUBHEADER": "Your Wuzapi API URL endpoint."
     },
     "HELP_CENTER": {
       "LABEL": "Help Center",
