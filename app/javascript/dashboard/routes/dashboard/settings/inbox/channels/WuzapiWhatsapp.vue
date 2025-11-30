@@ -6,7 +6,8 @@ import { useI18n } from 'vue-i18n';
 import { useVuelidate } from '@vuelidate/core';
 import { useAlert } from 'dashboard/composables';
 import { required } from '@vuelidate/validators';
-import { isPhoneE164OrEmpty, isValidURL } from 'shared/helpers/Validators';
+import { isPhoneE164OrEmpty } from 'shared/helpers/Validators';
+import { isValidURL } from '../../../../../helper/URLHelper';
 
 import NextButton from 'dashboard/components-next/button/Button.vue';
 
@@ -25,7 +26,9 @@ const uiFlags = computed(() => store.getters['inboxes/getUIFlags']);
 const rules = computed(() => ({
   inboxName: { required },
   phoneNumber: { required, isPhoneE164OrEmpty },
-  apiUrl: { isValidURL },
+  apiUrl: {
+    isValidURL: value => !value || isValidURL(value),
+  },
   token: {},
 }));
 
