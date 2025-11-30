@@ -1,6 +1,9 @@
 class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseService # rubocop:disable Metrics/ClassLength
   class ProviderUnavailableError < StandardError; end
 
+  DEFAULT_URL = ENV.fetch('WUZAPI_PROVIDER_DEFAULT_URL', nil)
+  DEFAULT_API_KEY = ENV.fetch('WUZAPI_PROVIDER_DEFAULT_API_KEY', nil)
+
   def send_template(phone_number, template_info); end
 
   def sync_templates; end
@@ -170,11 +173,12 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
   private
 
   def api_base_url
-    whatsapp_channel.provider_config['api_url'] || ENV.fetch('WUZAPI_API_URL', 'http://localhost:8080')
+    whatsapp_channel.provider_config['api_url'].presence || DEFAULT_URL || 'http://localhost:8080'
   end
 
   def api_headers
-    { 'Content-Type' => 'application/json', 'Authorization' => whatsapp_channel.provider_config['token'] }
+    token = whatsapp_channel.provider_config['token'].presence || DEFAULT_API_KEY
+    { 'Content-Type' => 'application/json', 'Authorization' => token }
   end
 
   def process_response(response)
