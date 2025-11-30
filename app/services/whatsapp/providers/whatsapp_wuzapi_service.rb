@@ -2,7 +2,6 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
   class ProviderUnavailableError < StandardError; end
 
   DEFAULT_URL = ENV.fetch('WUZAPI_PROVIDER_DEFAULT_URL', nil)
-  DEFAULT_API_KEY = ENV.fetch('WUZAPI_PROVIDER_DEFAULT_API_KEY', nil)
   DEFAULT_ADMIN_TOKEN = ENV.fetch('WUZAPI_ADMIN_TOKEN', nil)
 
   def send_template(phone_number, template_info); end
@@ -192,7 +191,7 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
   end
 
   def user_token
-    whatsapp_channel.provider_config['user_token'].presence || DEFAULT_API_KEY
+    whatsapp_channel.provider_config['user_token'].presence
   end
 
   def needs_user_creation?
