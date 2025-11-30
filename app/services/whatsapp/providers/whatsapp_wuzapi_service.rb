@@ -178,7 +178,7 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
 
   def api_headers
     token = whatsapp_channel.provider_config['token'].presence || DEFAULT_API_KEY
-    { 'Content-Type' => 'application/json', 'Authorization' => token }
+    { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{token}" }
   end
 
   def process_response(response)
