@@ -44,6 +44,8 @@ class Channel::Whatsapp < ApplicationRecord
   after_update_commit :configure_waha_webhook, if: -> { provider == 'waha' && saved_change_to_provider_config? }
   after_destroy_commit :destroy_evolution_instance, if: -> { provider == 'evolution' }
   after_update_commit :configure_evolution_webhook, if: -> { provider == 'evolution' && saved_change_to_provider_config? }
+  after_destroy_commit :destroy_wuzapi_instance, if: -> { provider == 'wuzapi' }
+  after_update_commit :configure_wuzapi_webhook, if: -> { provider == 'wuzapi' && saved_change_to_provider_config? }
 
   def name
     'Whatsapp'
@@ -112,7 +114,7 @@ class Channel::Whatsapp < ApplicationRecord
     # NOTE: This is the default behavior, so `mark_as_read` being `nil` is the same as `true`.
     return if provider_config&.dig('mark_as_read') == false
 
-    recipient_id = if provider == 'zapi'
+    recipient_id = if provider.in?(%w[zapi wuzapi])
                      conversation.contact.phone_number
                    else
                      conversation.contact.identifier || conversation.contact.phone_number
@@ -185,6 +187,18 @@ class Channel::Whatsapp < ApplicationRecord
     provider_service.configure_webhook
   rescue StandardError => e
     Rails.logger.error "Evolution webhook configure failed: #{e.message}"
+  end
+
+  def destroy_wuzapi_instance
+    disconnect_channel_provider
+  rescue StandardError => e
+    Rails.logger.error "Wuzapi disconnect failed: #{e.message}"
+  end
+
+  def configure_wuzapi_webhook
+    provider_service.configure_webhook
+  rescue StandardError => e
+    Rails.logger.error "Wuzapi webhook configure failed: #{e.message}"
   end
 
   private
