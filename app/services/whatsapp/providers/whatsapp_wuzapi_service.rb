@@ -52,12 +52,18 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
       timeout: 30
     )
 
-    raise ProviderUnavailableError unless process_response(response)
+    # Verifica se teve sucesso ou se já está conectado
+    already_connected = response.parsed_response.dig('error')&.include?('already connected')
+    
+    unless process_response(response) || already_connected
+      Rails.logger.error "Wuzapi connect failed: #{response.code} - #{response.body}"
+      raise ProviderUnavailableError
+    end
 
-    # Configure webhook
+    # Configure webhook (sempre tenta configurar)
     configure_webhook
 
-    # Check if needs QR code
+    # Check status and QR code
     status_response = HTTParty.get(
       "#{api_base_url}/session/status",
       headers: api_headers,
@@ -66,10 +72,22 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
 
     if status_response.success?
       data = status_response.parsed_response.dig('data')
-      if data && data['Connected'] && !data['LoggedIn']
+      Rails.logger.info "Wuzapi raw status response: #{status_response.parsed_response.inspect}"
+      Rails.logger.info "Wuzapi session data: #{data.inspect}"
+      Rails.logger.info "Wuzapi session status: connected=#{data&.dig('connected')}, loggedIn=#{data&.dig('loggedIn')}"
+      
+      if data && data['connected'] && !data['loggedIn']
+        # Precisa escanear QR code
+        Rails.logger.info "Wuzapi: Enqueuing QR code job for channel #{whatsapp_channel.id}"
         Channels::Whatsapp::WuzapiQrCodeJob.perform_later(whatsapp_channel)
-      elsif data && data['LoggedIn']
+      elsif data && data['loggedIn']
+        # Já está autenticado
+        Rails.logger.info "Wuzapi: Channel #{whatsapp_channel.id} already logged in"
         whatsapp_channel.update_provider_connection!(connection: 'open')
+      elsif !data || !data['connected']
+        # Precisa conectar primeiro, enfileira job do QR
+        Rails.logger.info "Wuzapi: Not connected, enqueuing QR code job for channel #{whatsapp_channel.id}"
+        Channels::Whatsapp::WuzapiQrCodeJob.perform_later(whatsapp_channel)
       end
     end
 
@@ -113,7 +131,7 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
         timeout: 15
       )
 
-      if status_response.success? && status_response.parsed_response.dig('data', 'LoggedIn')
+      if status_response.success? && status_response.parsed_response.dig('data', 'loggedIn')
         whatsapp_channel.update_provider_connection!(connection: 'open')
         return
       end
@@ -245,7 +263,14 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
   end
 
   def configure_webhook
-    webhook_url = whatsapp_channel.inbox.callback_webhook_url
+    # Use custom webhook base URL if provided, otherwise use default
+    base_url = ENV.fetch('WUZAPI_WEBHOOK_BASE_URL', nil) || whatsapp_channel.inbox.account.domain
+    webhook_path = Rails.application.routes.url_helpers.webhooks_whatsapp_path(
+      phone_number: whatsapp_channel.phone_number
+    )
+    webhook_url = "#{base_url}#{webhook_path}"
+
+    Rails.logger.info "Wuzapi: Configuring webhook URL: #{webhook_url}"
 
     response = HTTParty.post(
       "#{api_base_url}/webhook",
