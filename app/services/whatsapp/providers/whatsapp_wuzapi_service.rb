@@ -203,8 +203,8 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
     return if user_token.present?
     return unless admin_token.present?
 
-    # Gera token único para o usuário
-    generated_token = "chatwoot_#{whatsapp_channel.inbox_id}_#{SecureRandom.hex(8)}"
+    # Gera token único para o usuário (usa timestamp já que inbox_id ainda não existe)
+    generated_token = "chatwoot_#{Time.now.to_i}_#{SecureRandom.hex(8)}"
     
     # Cria usuário no Wuzapi
     response = HTTParty.post(
@@ -214,7 +214,7 @@ class Whatsapp::Providers::WhatsappWuzapiService < Whatsapp::Providers::BaseServ
         'Authorization' => admin_token
       },
       body: {
-        name: "Chatwoot Inbox #{whatsapp_channel.inbox_id}",
+        name: "Chatwoot #{whatsapp_channel.phone_number || 'Inbox'}",
         token: generated_token
       }.to_json,
       timeout: 15
